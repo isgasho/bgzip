@@ -36,11 +36,14 @@ with open("README.md") as fh:
 def get_version():
     filepath = os.path.join(os.path.dirname(__file__), "bgzip", "version.py")
     if os.path.isfile(filepath):
+        # This branch picks up the version from a wheel/dist, previously
+        # generated from github
         with open(filepath) as fh:
             version = dict()
             exec(fh.read().strip(), version)
             return version['__version__']
     else:
+        # This branch picks up version from a git annotated tag (canonical version)
         p = subprocess.run(["git", "describe", "--tags", "--match", "v*.*.*"], stdout=subprocess.PIPE)
         p.check_returncode()
         out = p.stdout.decode("ascii").strip()
